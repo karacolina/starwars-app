@@ -3,29 +3,29 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const starwarsApi = createApi({
   reducerPath: "starwarsApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://www.swapi.tech/api/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "https://swapi.tech/api/" }),
   endpoints: (builder) => ({
     getPeople: builder.query({
-      query: (page = 1) => `people/?page=${page}&limit=10`,
+      query: (page = 1) => `people?page=${page}`,
       onError: () => {
         console.error("Error fetching Starwars api");
       },
     }),
 
-    getPeopleId: builder.query({
-      query: (peopleId) => `people/${peopleId}`,
+    getCharacter: builder.query({
+      query: (characterId) => `people/${characterId}`,
     }),
 
-    getSearchPeople: builder.query({
-      query: (searchPeople) => `?search=${searchPeople}`,
+    getSearchCharacter: builder.query({
+      query: (searchTerm) => `people/?search=${searchTerm}`,
     }),
   }),
 });
 
 export const {
   useGetPeopleQuery,
-  useGetPeopleIdQuery,
-  useGetSearchPeopleQuery,
+  useGetCharacterQuery,
+  useGetSearchCharacterQuery,
 } = starwarsApi;
 
 /* axios.get(url).then((resp) => {

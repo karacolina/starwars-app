@@ -1,6 +1,7 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getStarwars, getSearchStarwars } from "./store/slices/starwars/thunks";
+import { useState } from "react";
+//import { useDispatch } from "react-redux";
+import { useGetPeopleQuery } from "./api/starwarsApi";
+//import { getStarwars, getSearchStarwars } from "./store/slices/starwars/thunks";
 
 import {
   StyledButton,
@@ -10,49 +11,45 @@ import {
 } from "./components/Button/StyleButton";
 import { StyledCard, StyleContainerCard } from "./Styled.card";
 import { StylePagination } from "./components/Pagination/Pagination";
-//import { Search } from "./components/Search/Search";
+import { Search } from "./components/Search/Search";
 import { Title } from "./components/Title/StyleTitle";
 import { StyleHeader } from "./components/Header/StyleHeader";
 import { Loader } from "./components/Loader/Loader";
-import { useGetPeopleQuery } from "./api/starwarsApi";
 
 const App = () => {
-  const dispatch = useDispatch();
-  //traer lo que necesito mostrar, paginador, datos de la api
-  //const { page = 1, isLoading } = useSelector((state) => state.starwars);
+  const [page, setPage] = useState(1);
 
-  const { starwars, isLoading, error } = useGetPeopleQuery();
-  //const { data: searchData } = useGetSearchPeopleQuery(searchPeople);
+  const { data: people, isLoading } = useGetPeopleQuery({ page: 1 });
 
-  useEffect(() => {
-    dispatch(getStarwars());
-  }, []);
+  const prevButton = () => {
+    if (page === 1) return;
 
-  /*   useEffect(() => {
-    if (searchPeople) {
-      dispatch(getSearchStarwars(searchPeople));
-    }
-  }, []); */
+    setPage(page - 1);
+    console.log("prev");
+  };
+
+  const nextButton = () => {
+    setPage(page + 1);
+
+    console.log("next");
+  };
 
   return (
     <>
       <StyleHeader>
         <img src="src/assets/star-wars-dark.svg" alt="starwars" />
         <Title>Starwars App</Title>
-        {/* <Search /> */}
+        <Search />
       </StyleHeader>
 
       <div>
-        {error ? (
-          "Error data!!!"
-        ) : isLoading ? (
+        {isLoading ? (
           <Loader />
         ) : (
           <StyleContainerCard>
-            {starwars?.map((characters) => (
+            {people?.results?.map((characters) => (
               <StyledCard key={characters.uid}>
                 <h3>Name: {characters.name}</h3>
-                <p>Gender: {characters.gender}</p>
               </StyledCard>
             ))}
           </StyleContainerCard>
@@ -60,30 +57,27 @@ const App = () => {
       </div>
 
       {/*  //Todo: crear referencia create.ref */}
-      {/*       <StylePagination>
+      <StylePagination>
         <StyledButton
           type="button"
-          disabled={isLoading || page === 1}
-          onClick={() => dispatch(getStarwars(page - 1))}
+          disabled={isLoading}
+          onClick={() => prevButton}
         >
           Anterior
         </StyledButton>
         <StyledTextLink>Anterior</StyledTextLink>
 
-        <StyledButtonOutline
-          type="button"
-          onClick={() => dispatch(getStarwars(page))}
-        >
+        <StyledButtonOutline type="button" onClick={() => setPage(1)}>
           Ir al inicio
         </StyledButtonOutline>
         <StyledButtonPrimary
           type="button"
           disabled={isLoading}
-          onClick={() => dispatch(getStarwars(page + 1))}
+          onClick={() => nextButton}
         >
           Siguiente
-        </StyledButtonPrimary> 
-      </StylePagination>*/}
+        </StyledButtonPrimary>
+      </StylePagination>
     </>
   );
 };

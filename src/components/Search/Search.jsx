@@ -1,21 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StyledSearch } from "./StyleSearch";
-import { useDispatch } from "react-redux";
-//import { searchStarwars } from "../../store/slices/starwars/thunks";
+import { useGetSearchCharacterQuery } from "../../api/starwarsApi";
 
 export const Search = () => {
-  const [search, setSearch] = useState("");
-  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState("");
+  const { data, isLoading } = useGetSearchCharacterQuery(searchTerm);
 
   //Todo: refactorizar a custom hook
   const handleChange = (e) => {
-    setSearch(e.target.value);
-    console.log("value is:", e.target.value);
+    const value = e.target.value;
+    setSearchTerm(value);
+    console.log("value is:", value);
   };
 
-  useEffect(() => {
-    dispatch(searchStarwars(search));
-  }, [search, dispatch]);
+  console.log(data);
 
   return (
     <StyledSearch>
@@ -24,7 +22,7 @@ export const Search = () => {
           type="text"
           placeholder="Search ....."
           onChange={handleChange}
-          value={search}
+          value={searchTerm}
         />
         <svg
           fillRule="#000000"
